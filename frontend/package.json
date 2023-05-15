@@ -1,0 +1,11 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "description": "Service book frontend",
+  "main": "./src/index.js",
+  "scripts": {
+    "test": "/\\.(js|jsx)$/"
+  },
+  "author": "sqMax",
+  "license": "ISC"
+}
