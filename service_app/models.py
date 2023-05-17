@@ -1,3 +1,112 @@
+from django.contrib.auth.models import User
 from django.db import models
 
-# Create your models here.
+
+# Reference books
+class TechniqueModel(models.Model):
+    name = models.CharField(max_length=128, unique=True)
+    description = models.TextField()
+
+
+class EngineModel(models.Model):
+    name = models.CharField(max_length=128, unique=True)
+    description = models.TextField()
+
+
+class TransmissionModel(models.Model):
+    name = models.CharField(max_length=128, unique=True)
+    description = models.TextField()
+
+
+class DriveAxleModel(models.Model):
+    name = models.CharField(max_length=128, unique=True)
+    description = models.TextField()
+
+
+class SteerableAxleModel(models.Model):
+    name = models.CharField(max_length=128, unique=True)
+    description = models.TextField()
+
+
+class MaintenanceType(models.Model):
+    name = models.CharField(max_length=128, unique=True)
+    description = models.TextField()
+
+
+class Failure(models.Model):
+    name = models.CharField(max_length=128, unique=True)
+    description = models.TextField()
+
+
+class Recovery(models.Model):
+    name = models.CharField(max_length=128, unique=True)
+    description = models.TextField()
+
+
+# Users
+class ServiceCompany(models.Model):
+    user = models.OneToOneField(User, related_name='serviceCompanies', primary_key=True, on_delete=models.CASCADE)
+    name = models.CharField(max_length=128, unique=True)
+    description = models.TextField()
+
+
+class Client(models.Model):
+    user = models.OneToOneField(User, related_name='clients', primary_key=True, on_delete=models.CASCADE)
+    name = models.CharField(max_length=128, unique=True)
+    description = models.TextField()
+
+
+# Main entity
+class Car(models.Model):
+    carNumber = models.CharField(max_length=64, unique=True, primary_key=True,verbose_name='Заводской номер машины')
+    techniqueModel = models.ForeignKey(TechniqueModel, related_name='cars', verbose_name='Модель техники',
+                                       on_delete=models.CASCADE)
+    engineModel = models.ForeignKey(EngineModel, related_name='cars', verbose_name='Модель двигателя',
+                                    on_delete=models.CASCADE)
+    engineNumber = models.CharField(max_length=64, verbose_name='Заводской номер двигателя')
+    transmissionModel = models.ForeignKey(TransmissionModel, related_name='cars', verbose_name='Модель трансмиссии',
+                                          on_delete=models.CASCADE)
+    transmissionNumber = models.CharField(max_length=64, verbose_name='Заводской номер трансмиссии')
+    driveAxleModel = models.ForeignKey(DriveAxleModel, related_name='cars', verbose_name='Модель ведущего моста',
+                                       on_delete=models.CASCADE)
+    driveAxleNumber = models.CharField(max_length=64, verbose_name='Заводской номер ведущего моста')
+    steerableAxleModel = models.ForeignKey(SteerableAxleModel, related_name='cars',
+                                           verbose_name='Модель управляемого моста', on_delete=models.CASCADE)
+    steerableAxleNumber = models.CharField(max_length=64, verbose_name='Заводской номер управляемого моста')
+    supplyContract = models.CharField(max_length=64, verbose_name='Договор поставки №, дата')
+    shippingDate = models.DateField(verbose_name='Дата отгрузки с завода')
+    consignee = models.CharField(max_length=128, verbose_name='Грузополучатель (конечный потребитель)')
+    deliveryAddress = models.CharField(max_length=128, verbose_name='Адрес поставки (эксплуатации)')
+    equipment = models.CharField(max_length=128, verbose_name='Комплектация (доп. опции)')
+    client = models.ForeignKey(Client, related_name='cars', verbose_name='Клиент', on_delete=models.CASCADE)
+    serviceCompany = models.ForeignKey(ServiceCompany, related_name='cars', verbose_name='Сервисная компания',
+                                       on_delete=models.CASCADE)
+
+
+# Service entities
+class Maintenance(models.Model):
+    type = models.ForeignKey(MaintenanceType, related_name='maintenances', verbose_name='Вид ТО',
+                             on_delete=models.CASCADE)
+    date = models.DateField(verbose_name='Дата проведения ТО')
+    operatingTime = models.IntegerField(verbose_name='Наработка, м/час')
+    order = models.CharField(max_length=64, verbose_name='Номер заказ-наряда')
+    orderDate = models.DateField(verbose_name='Дата заказ-наряда')
+    serviceCompany = models.ForeignKey(ServiceCompany, related_name='maintenances', verbose_name='Сервисная компания',
+                                       on_delete=models.CASCADE)
+    car = models.ForeignKey(Car, related_name='maintenances', verbose_name='Машина', on_delete=models.CASCADE)
+
+
+class Reclamation(models.Model):
+    failureDate = models.DateField(verbose_name='Дата отказа')
+    operatingTime = models.IntegerField(verbose_name='Наработка, м/час')
+    failure = models.ForeignKey(Failure, related_name='reclamations', verbose_name='Узел отказа',
+                                on_delete=models.CASCADE)
+    description = models.TextField(verbose_name='Описание отказа')
+    recovery = models.ForeignKey(Recovery, related_name='reclamations', verbose_name='Способ восстановления',
+                                 on_delete=models.CASCADE)
+    spares = models.CharField(max_length=255, verbose_name='Используемые запасные части')
+    recoveryDate = models.DateField(verbose_name='Дата восстановления')
+    downtime = models.IntegerField(verbose_name='Время простоя техники')
+    car = models.ForeignKey(Car, related_name='reclamations', verbose_name='Машина', on_delete=models.CASCADE)
+    serviceCompany = models.ForeignKey(ServiceCompany, related_name='reclamations', verbose_name='Сервисная компания',
+                                       on_delete=models.CASCADE)
