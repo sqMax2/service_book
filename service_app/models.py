@@ -58,7 +58,7 @@ class Client(models.Model):
 
 # Main entity
 class Car(models.Model):
-    carNumber = models.CharField(max_length=64, unique=True, primary_key=True,verbose_name='Заводской номер машины')
+    carNumber = models.CharField(max_length=64, unique=True, primary_key=True, verbose_name='Заводской номер машины')
     techniqueModel = models.ForeignKey(TechniqueModel, related_name='cars', verbose_name='Модель техники',
                                        on_delete=models.CASCADE)
     engineModel = models.ForeignKey(EngineModel, related_name='cars', verbose_name='Модель двигателя',

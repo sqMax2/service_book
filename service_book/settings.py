@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'corsheaders',
     'service_app.apps.ServiceAppConfig',
+    'authapp',
 ]
 
 MIDDLEWARE = [
@@ -179,6 +180,7 @@ ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_FORMS = {'signup': 'authapp.models.BasicSignupForm'}
+ACCOUNT_ADAPTER = 'authapp.adapter.NoNewUsersAccountAdapter'
 
 # Security config
 if not DEBUG:
