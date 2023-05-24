@@ -44,16 +44,24 @@ class Recovery(models.Model):
 
 
 # Users
-class ServiceCompany(models.Model):
-    user = models.OneToOneField(User, related_name='serviceCompanies', primary_key=True, on_delete=models.CASCADE)
-    name = models.CharField(max_length=128, unique=True)
-    description = models.TextField()
+class Account(models.Model):
+    # Categories
+    CLIENT = 'CL'
+    SERVICE = 'SC'
+    MANAGER = 'MN'
+    CATEGORY_NAMES = {CLIENT: 'Клиент', SERVICE: 'Сервисная компания', MANAGER: 'Менеджер'}
+    CATEGORY_CHOICES = (
+        (CLIENT, 'Client'),
+        (SERVICE, 'Service Company'),
+        (MANAGER, 'Manager')
+    )
 
+    user = models.OneToOneField(User, primary_key=True, related_name='account', on_delete=models.CASCADE)
+    category = models.CharField(max_length=2, choices=CATEGORY_CHOICES, default=CLIENT, verbose_name='Категория')
 
-class Client(models.Model):
-    user = models.OneToOneField(User, related_name='clients', primary_key=True, on_delete=models.CASCADE)
-    name = models.CharField(max_length=128, unique=True)
-    description = models.TextField()
+    @property
+    def category_name(self):
+        return self.CATEGORY_NAMES[str(self.category)]
 
 
 # Main entity
@@ -78,8 +86,8 @@ class Car(models.Model):
     consignee = models.CharField(max_length=128, verbose_name='Грузополучатель (конечный потребитель)')
     deliveryAddress = models.CharField(max_length=128, verbose_name='Адрес поставки (эксплуатации)')
     equipment = models.CharField(max_length=128, verbose_name='Комплектация (доп. опции)')
-    client = models.ForeignKey(Client, related_name='cars', verbose_name='Клиент', on_delete=models.CASCADE)
-    serviceCompany = models.ForeignKey(ServiceCompany, related_name='cars', verbose_name='Сервисная компания',
+    client = models.ForeignKey(Account, related_name='client_cars', verbose_name='Клиент', on_delete=models.CASCADE)
+    serviceCompany = models.ForeignKey(Account, related_name='service_cars', verbose_name='Сервисная компания',
                                        on_delete=models.CASCADE)
 
 
@@ -91,7 +99,7 @@ class Maintenance(models.Model):
     operatingTime = models.IntegerField(verbose_name='Наработка, м/час')
     order = models.CharField(max_length=64, verbose_name='Номер заказ-наряда')
     orderDate = models.DateField(verbose_name='Дата заказ-наряда')
-    serviceCompany = models.ForeignKey(ServiceCompany, related_name='maintenances', verbose_name='Сервисная компания',
+    serviceCompany = models.ForeignKey(Account, related_name='maintenances', verbose_name='Сервисная компания',
                                        on_delete=models.CASCADE)
     car = models.ForeignKey(Car, related_name='maintenances', verbose_name='Машина', on_delete=models.CASCADE)
 
@@ -108,5 +116,5 @@ class Reclamation(models.Model):
     recoveryDate = models.DateField(verbose_name='Дата восстановления')
     downtime = models.IntegerField(verbose_name='Время простоя техники')
     car = models.ForeignKey(Car, related_name='reclamations', verbose_name='Машина', on_delete=models.CASCADE)
-    serviceCompany = models.ForeignKey(ServiceCompany, related_name='reclamations', verbose_name='Сервисная компания',
+    serviceCompany = models.ForeignKey(Account, related_name='reclamations', verbose_name='Сервисная компания',
                                        on_delete=models.CASCADE)
