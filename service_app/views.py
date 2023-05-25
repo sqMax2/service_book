@@ -3,7 +3,7 @@ from rest_framework import viewsets, permissions
 from django.views.generic import TemplateView
 
 from .models import Car, Account
-from .serializers import CarSerializer, CarBasicSerializer
+from .serializers import *
 
 
 class AppView(TemplateView):
@@ -23,9 +23,24 @@ class AdminPermission(permissions.BasePermission):
         return request.user.is_authenticated and request.method in permissions.SAFE_METHODS
 
 
+class ManagerPermission(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return request.user.groups.filter(name='Manager').exists()
+
+
+class ClientPermission(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return request.user.groups.filter(name='Client').exists()
+
+
+class ServicePermission(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return request.user.groups.filter(name='Service').exists()
+
+
 # REST viewsets
 class CarViewset(viewsets.ModelViewSet):
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [AdminPermission | ManagerPermission]
     lookup_field = 'carNumber'
     queryset = Car.objects.all()
 
@@ -37,7 +52,22 @@ class CarViewset(viewsets.ModelViewSet):
         return CarBasicSerializer
 
 
-class AccountSerializer(viewsets.ModelViewSet):
+class AccountViewset(viewsets.ModelViewSet):
     permission_classes = [AdminPermission]
     lookup_field = 'user'
     queryset = Account.objects.all()
+    serializer_class = AccountSerializer
+
+
+class MaintenanceViewset(viewsets.ModelViewSet):
+    permission_classes = [AdminPermission | ClientPermission | ServicePermission | ManagerPermission]
+    lookup_field = 'user'
+    queryset = Account.objects.all()
+    serializer_class = MaintenanceSerializer
+
+
+class ReclamationViewset(viewsets.ModelViewSet):
+    permission_classes = [AdminPermission | ServicePermission | ManagerPermission]
+    lookup_field = 'user'
+    queryset = Account.objects.all()
+    serializer_class = ReclamationSerializer
