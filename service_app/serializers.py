@@ -75,7 +75,7 @@ class AccountSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Account
-        fields = ['pk', 'user', 'name', 'description', 'url']
+        fields = ['user', 'category', 'url']
 
 
 class CarSerializer(serializers.HyperlinkedModelSerializer):
@@ -83,7 +83,20 @@ class CarSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Car
-        # fields = ['carNumber', 'user', 'name', 'description', 'url']
+        fields = ['carNumber', 'url', 'techniqueModel', 'engineModel', 'engineNumber', 'transmissionModel',
+                  'transmissionNumber', 'driveAxleModel', 'driveAxleNumber', 'steerableAxleModel',
+                  'steerableAxleNumber', 'supplyContract', 'shippingDate', 'consignee', 'deliveryAddress',
+                  'equipment', 'client', 'serviceCompany']
+
+
+class CarBasicSerializer(serializers.HyperlinkedModelSerializer):
+    url = serializers.HyperlinkedIdentityField(view_name='car_basic-detail', lookup_field='carNumber')
+
+    class Meta:
+        model = Car
+        fields = ['carNumber', 'url', 'techniqueModel', 'engineModel', 'engineNumber', 'transmissionModel',
+                  'transmissionNumber', 'driveAxleModel', 'driveAxleNumber', 'steerableAxleModel',
+                  'steerableAxleNumber']
 
 
 class MaintenanceSerializer(serializers.HyperlinkedModelSerializer):

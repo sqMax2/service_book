@@ -16,6 +16,7 @@ GROUPS = {
         "car": ["view"],
         "maintenance": ["add", "change", "view"],
         "reclamation": ["view"],
+        "account": ["view"]
     },
 
     "Manager": {
@@ -23,6 +24,7 @@ GROUPS = {
         "car": ["add", "delete", "change", "view"],
         "maintenance": ["add", "delete", "change", "view"],
         "reclamation": ["add", "delete", "change", "view"],
+        "account": ["view"]
     },
 
     "Service": {
@@ -30,6 +32,7 @@ GROUPS = {
         "car": ["view"],
         "maintenance": ["add", "delete", "change", "view"],
         "reclamation": ["add", "delete", "change", "view"],
+        "account": ["view"]
     }
 }
 
