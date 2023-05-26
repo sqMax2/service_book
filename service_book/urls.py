@@ -7,7 +7,9 @@ from django.conf.urls.static import static
 from django.conf import settings
 from rest_framework import routers
 from rest_framework.schemas import get_schema_view
-from service_app.views import CarViewset, AccountViewset, MaintenanceViewset, ReclamationViewset
+from service_app.views import CarViewset, AccountViewset, MaintenanceViewset, ReclamationViewset, TechniqueModelViewset, \
+    EngineModelViewset, TransmissionModelViewset, DriveAxleModelViewset, SteerableAxleModelViewset, \
+    MaintenanceTypeViewset, FailureViewset, RecoveryViewset
 
 # REST
 router = routers.DefaultRouter()
@@ -15,6 +17,15 @@ router.register(r'car', CarViewset)
 router.register(r'account', AccountViewset)
 router.register(r'maintenance', MaintenanceViewset)
 router.register(r'reclamation', ReclamationViewset)
+router.register(r'technique_model', TechniqueModelViewset)
+router.register(r'engine_model', EngineModelViewset)
+router.register(r'transmission_model', TransmissionModelViewset)
+router.register(r'drive_axle_model', DriveAxleModelViewset)
+router.register(r'steerable_axle_model', SteerableAxleModelViewset)
+router.register(r'maintenance', MaintenanceTypeViewset)
+router.register(r'failure', FailureViewset)
+router.register(r'recovery', RecoveryViewset)
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),

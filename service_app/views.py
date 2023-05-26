@@ -38,9 +38,14 @@ class ServicePermission(permissions.BasePermission):
         return request.user.groups.filter(name='Service').exists()
 
 
+class ReadonlyPermission(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return request.method in permissions.SAFE_METHODS
+
+
 # REST viewsets
 class CarViewset(viewsets.ModelViewSet):
-    permission_classes = [AdminPermission | ManagerPermission]
+    permission_classes = [AdminPermission | ManagerPermission | ReadonlyPermission]
     lookup_field = 'carNumber'
     queryset = Car.objects.all()
 
@@ -61,13 +66,69 @@ class AccountViewset(viewsets.ModelViewSet):
 
 class MaintenanceViewset(viewsets.ModelViewSet):
     permission_classes = [AdminPermission | ClientPermission | ServicePermission | ManagerPermission]
-    lookup_field = 'user'
-    queryset = Account.objects.all()
+    lookup_field = 'order'
+    queryset = Maintenance.objects.all()
     serializer_class = MaintenanceSerializer
 
 
 class ReclamationViewset(viewsets.ModelViewSet):
     permission_classes = [AdminPermission | ServicePermission | ManagerPermission]
-    lookup_field = 'user'
-    queryset = Account.objects.all()
+    lookup_field = 'pk'
+    queryset = Reclamation.objects.all()
     serializer_class = ReclamationSerializer
+
+
+class TechniqueModelViewset(viewsets.ModelViewSet):
+    permission_classes = [AdminPermission | ManagerPermission]
+    lookup_field = 'name'
+    queryset = TechniqueModel.objects.all()
+    serializer_class = TechniqueModelSerializer
+
+
+class EngineModelViewset(viewsets.ModelViewSet):
+    permission_classes = [AdminPermission | ManagerPermission]
+    lookup_field = 'name'
+    queryset = EngineModel.objects.all()
+    serializer_class = EngineModelSerializer
+
+
+class TransmissionModelViewset(viewsets.ModelViewSet):
+    permission_classes = [AdminPermission | ManagerPermission]
+    lookup_field = 'name'
+    queryset = TransmissionModel.objects.all()
+    serializer_class = TransmissionModelSerializer
+
+
+class DriveAxleModelViewset(viewsets.ModelViewSet):
+    permission_classes = [AdminPermission | ManagerPermission]
+    lookup_field = 'name'
+    queryset = DriveAxleModel.objects.all()
+    serializer_class = DriveAxleModelSerializer
+
+
+class SteerableAxleModelViewset(viewsets.ModelViewSet):
+    permission_classes = [AdminPermission | ManagerPermission]
+    lookup_field = 'name'
+    queryset = SteerableAxleModel.objects.all()
+    serializer_class = SteerableAxleModelSerializer
+
+
+class MaintenanceTypeViewset(viewsets.ModelViewSet):
+    permission_classes = [AdminPermission | ManagerPermission]
+    lookup_field = 'name'
+    queryset = MaintenanceType.objects.all()
+    serializer_class = MaintenanceTypeSerializer
+
+
+class FailureViewset(viewsets.ModelViewSet):
+    permission_classes = [AdminPermission | ManagerPermission]
+    lookup_field = 'name'
+    queryset = Failure.objects.all()
+    serializer_class = FailureSerializer
+
+
+class RecoveryViewset(viewsets.ModelViewSet):
+    permission_classes = [AdminPermission | ManagerPermission]
+    lookup_field = 'name'
+    queryset = Recovery.objects.all()
+    serializer_class = RecoverySerializer
