@@ -1,5 +1,7 @@
+from pprint import pprint
+
 from django.shortcuts import render
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, filters
 from django.views.generic import TemplateView
 
 from .models import Car, Account
@@ -48,12 +50,26 @@ class CarViewset(viewsets.ModelViewSet):
     permission_classes = [AdminPermission | ManagerPermission | ReadonlyPermission]
     lookup_field = 'carNumber'
     queryset = Car.objects.all()
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ['shippingDate']
+    ordering = ['shippingDate']
+
+    def get_queryset(self):
+        queryset = self.queryset
+        params = self.request.query_params
+        field_names = [field.name for field in queryset.model._meta.fields]
+        for param in params:
+            if param in field_names:
+                queryset = queryset.filter(**{param: params[param]})
+                # pprint(f'{param}: {params[param]} is a field')
+            # pprint(queryset)
+        return queryset
 
     def get_serializer_class(self):
         if self.request.user.is_authenticated:
-            print('-- auth')
+            # print('-- auth')
             return CarSerializer
-        print('-- No auth')
+        # print('-- No auth')
         return CarBasicSerializer
 
 
@@ -69,6 +85,20 @@ class MaintenanceViewset(viewsets.ModelViewSet):
     lookup_field = 'order'
     queryset = Maintenance.objects.all()
     serializer_class = MaintenanceSerializer
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ['date']
+    ordering = ['date']
+
+    def get_queryset(self):
+        queryset = self.queryset
+        params = self.request.query_params
+        field_names = [field.name for field in queryset.model._meta.fields]
+        for param in params:
+            if param in field_names:
+                queryset = queryset.filter(**{param: params[param]})
+                # pprint(f'{param}: {params[param]} is a field')
+            # pprint(queryset)
+        return queryset
 
 
 class ReclamationViewset(viewsets.ModelViewSet):
@@ -76,6 +106,20 @@ class ReclamationViewset(viewsets.ModelViewSet):
     lookup_field = 'pk'
     queryset = Reclamation.objects.all()
     serializer_class = ReclamationSerializer
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ['failureDate']
+    ordering = ['failureDate']
+
+    def get_queryset(self):
+        queryset = self.queryset
+        params = self.request.query_params
+        field_names = [field.name for field in queryset.model._meta.fields]
+        for param in params:
+            if param in field_names:
+                queryset = queryset.filter(**{param: params[param]})
+                # pprint(f'{param}: {params[param]} is a field')
+            # pprint(queryset)
+        return queryset
 
 
 class TechniqueModelViewset(viewsets.ModelViewSet):

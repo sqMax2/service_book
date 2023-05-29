@@ -5,42 +5,42 @@ from django.db import models
 # Reference books
 class TechniqueModel(models.Model):
     name = models.CharField(max_length=128, unique=True)
-    description = models.TextField()
+    description = models.TextField(null=True, blank=True)
 
 
 class EngineModel(models.Model):
     name = models.CharField(max_length=128, unique=True)
-    description = models.TextField()
+    description = models.TextField(null=True, blank=True)
 
 
 class TransmissionModel(models.Model):
     name = models.CharField(max_length=128, unique=True)
-    description = models.TextField()
+    description = models.TextField(null=True, blank=True)
 
 
 class DriveAxleModel(models.Model):
     name = models.CharField(max_length=128, unique=True)
-    description = models.TextField()
+    description = models.TextField(null=True, blank=True)
 
 
 class SteerableAxleModel(models.Model):
     name = models.CharField(max_length=128, unique=True)
-    description = models.TextField()
+    description = models.TextField(null=True, blank=True)
 
 
 class MaintenanceType(models.Model):
     name = models.CharField(max_length=128, unique=True)
-    description = models.TextField()
+    description = models.TextField(null=True, blank=True)
 
 
 class Failure(models.Model):
     name = models.CharField(max_length=128, unique=True)
-    description = models.TextField()
+    description = models.TextField(null=True, blank=True)
 
 
 class Recovery(models.Model):
     name = models.CharField(max_length=128, unique=True)
-    description = models.TextField()
+    description = models.TextField(null=True, blank=True)
 
 
 # Users
@@ -100,7 +100,7 @@ class Maintenance(models.Model):
     order = models.CharField(max_length=64, verbose_name='Номер заказ-наряда')
     orderDate = models.DateField(verbose_name='Дата заказ-наряда')
     serviceCompany = models.ForeignKey(Account, related_name='maintenances', verbose_name='Сервисная компания',
-                                       on_delete=models.CASCADE)
+                                       on_delete=models.CASCADE, null=True, blank=True)
     car = models.ForeignKey(Car, related_name='maintenances', verbose_name='Машина', on_delete=models.CASCADE)
 
 
