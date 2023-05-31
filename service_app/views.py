@@ -1,13 +1,62 @@
 from pprint import pprint
-
-from django.shortcuts import render
+# from django.shortcuts import render
+from django.contrib.auth import login
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_protect
 from rest_framework import viewsets, permissions, filters
 from django.views.generic import TemplateView
+# from .models import Car, Account
+from rest_framework.authentication import BasicAuthentication
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from .models import Car, Account
 from .serializers import *
 
+# Auth views
+ensure_csrf = method_decorator(ensure_csrf_cookie)
+csrf_protect_method = method_decorator(csrf_protect)
 
+
+class SetCSRFCookie(APIView):
+    permission_classes = []
+    authentication_classes = []
+
+    @ensure_csrf
+    def get(self, request):
+        return Response("CSRF Cookie set.")
+
+
+class LoginView(APIView):
+    permission_classes = [AllowAny]
+    authentication_classes = []
+
+    @csrf_protect_method
+    def post(self, request):
+        serializer = LoginSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        login(request, user)
+        return Response("Logged in")
+
+
+# Auth model views
+class UserViewset(viewsets.ReadOnlyModelViewSet):
+    # authentication_classes = [BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+    lookup_field = 'username'
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
+class GroupViewset(viewsets.ReadOnlyModelViewSet):
+    permission_classes = [IsAuthenticated]
+    lookup_field = 'name'
+    queryset = Group.objects.all()
+    serializer_class = GroupSerializer
+
+
+# Main app view
 class AppView(TemplateView):
     template_name = 'default.html'
 
@@ -46,6 +95,13 @@ class ReadonlyPermission(permissions.BasePermission):
 
 
 # REST viewsets
+# class AccountViewset(viewsets.ModelViewSet):
+#     permission_classes = [AdminPermission]
+#     lookup_field = 'user'
+#     queryset = Account.objects.all()
+#     serializer_class = AccountSerializer
+
+
 class CarViewset(viewsets.ModelViewSet):
     permission_classes = [AdminPermission | ManagerPermission | ReadonlyPermission]
     lookup_field = 'carNumber'
@@ -73,16 +129,9 @@ class CarViewset(viewsets.ModelViewSet):
         return CarBasicSerializer
 
 
-class AccountViewset(viewsets.ModelViewSet):
-    permission_classes = [AdminPermission]
-    lookup_field = 'user'
-    queryset = Account.objects.all()
-    serializer_class = AccountSerializer
-
-
 class MaintenanceViewset(viewsets.ModelViewSet):
     permission_classes = [AdminPermission | ClientPermission | ServicePermission | ManagerPermission]
-    lookup_field = 'order'
+    lookup_field = 'id'
     queryset = Maintenance.objects.all()
     serializer_class = MaintenanceSerializer
     filter_backends = [filters.OrderingFilter]
@@ -124,55 +173,55 @@ class ReclamationViewset(viewsets.ModelViewSet):
 
 class TechniqueModelViewset(viewsets.ModelViewSet):
     permission_classes = [AdminPermission | ManagerPermission]
-    lookup_field = 'name'
+    lookup_field = 'pk'
     queryset = TechniqueModel.objects.all()
     serializer_class = TechniqueModelSerializer
 
 
 class EngineModelViewset(viewsets.ModelViewSet):
     permission_classes = [AdminPermission | ManagerPermission]
-    lookup_field = 'name'
+    lookup_field = 'pk'
     queryset = EngineModel.objects.all()
     serializer_class = EngineModelSerializer
 
 
 class TransmissionModelViewset(viewsets.ModelViewSet):
     permission_classes = [AdminPermission | ManagerPermission]
-    lookup_field = 'name'
+    lookup_field = 'pk'
     queryset = TransmissionModel.objects.all()
     serializer_class = TransmissionModelSerializer
 
 
 class DriveAxleModelViewset(viewsets.ModelViewSet):
     permission_classes = [AdminPermission | ManagerPermission]
-    lookup_field = 'name'
+    lookup_field = 'pk'
     queryset = DriveAxleModel.objects.all()
     serializer_class = DriveAxleModelSerializer
 
 
 class SteerableAxleModelViewset(viewsets.ModelViewSet):
     permission_classes = [AdminPermission | ManagerPermission]
-    lookup_field = 'name'
+    lookup_field = 'pk'
     queryset = SteerableAxleModel.objects.all()
     serializer_class = SteerableAxleModelSerializer
 
 
 class MaintenanceTypeViewset(viewsets.ModelViewSet):
     permission_classes = [AdminPermission | ManagerPermission]
-    lookup_field = 'name'
+    lookup_field = 'pk'
     queryset = MaintenanceType.objects.all()
     serializer_class = MaintenanceTypeSerializer
 
 
 class FailureViewset(viewsets.ModelViewSet):
     permission_classes = [AdminPermission | ManagerPermission]
-    lookup_field = 'name'
+    lookup_field = 'pk'
     queryset = Failure.objects.all()
     serializer_class = FailureSerializer
 
 
 class RecoveryViewset(viewsets.ModelViewSet):
     permission_classes = [AdminPermission | ManagerPermission]
-    lookup_field = 'name'
+    lookup_field = 'pk'
     queryset = Recovery.objects.all()
     serializer_class = RecoverySerializer
