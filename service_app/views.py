@@ -1,9 +1,9 @@
 from pprint import pprint
 # from django.shortcuts import render
-from django.contrib.auth import login
+from django.contrib.auth import login, logout, get_user
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_protect
-from rest_framework import viewsets, permissions, filters
+from rest_framework import viewsets, permissions, filters, status
 from django.views.generic import TemplateView
 # from .models import Car, Account
 from rest_framework.authentication import BasicAuthentication
@@ -31,6 +31,9 @@ class LoginView(APIView):
     permission_classes = [AllowAny]
     authentication_classes = []
 
+    def get(self, request):
+        return Response(get_user(request).username)
+
     @csrf_protect_method
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
@@ -38,6 +41,13 @@ class LoginView(APIView):
         user = serializer.validated_data['user']
         login(request, user)
         return Response("Logged in")
+
+
+class LogoutView(APIView):
+    def get(self, request, format=None):
+        # using Django logout
+        logout(request)
+        return Response(status=status.HTTP_200_OK)
 
 
 # Auth model views

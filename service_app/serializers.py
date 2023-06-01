@@ -28,10 +28,15 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     id = serializers.PrimaryKeyRelatedField(read_only=True)
     groups = serializers.HyperlinkedRelatedField(view_name='group-detail', lookup_field='name', many=True,
                                                  read_only=True)
+    role = serializers.SerializerMethodField()
 
     class Meta:
         model = django.contrib.auth.models.User
-        fields = ['id', 'username', 'first_name', 'groups', 'url']
+        fields = ['id', 'username', 'first_name', 'groups', 'role', 'url']
+
+    def get_role(self, obj):
+        result = [val for sublist in obj.groups.values_list('name') for val in sublist]
+        return result
 
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):

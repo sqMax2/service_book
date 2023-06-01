@@ -19,8 +19,10 @@
     "react-dom": "^18.2.0",
     "react-router": "^6.11.1",
     "react-router-dom": "^6.11.1",
+    "react-tabs": "^6.0.1",
     "swagger-ui": "^4.18.3",
     "swagger-ui-react": "^4.18.3",
+    "url-loader": "^4.1.1",
     "webpack-bundle-tracker": "^1.8.1"
   },
   "devDependencies": {
