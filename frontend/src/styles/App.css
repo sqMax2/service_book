@@ -45,24 +45,26 @@ body {
 
 header {
   display: grid;
-  gap: 5px;
-  grid-template-columns: 1fr 5fr 1fr;
-  grid-template-rows: auto auto;
+  gap: 1rem;
+  grid-template-columns: 2fr 5fr 2fr;
+  grid-template-rows: 4rem 4rem;
   align-items: center;
   justify-items: center;
   grid-template-areas:
-    "img div button"
-    "img h2 h2";
+    "logo contact auth"
+    "logo title auth";
 }
-header > img {
-  grid-area: img;
+header > .logo {
+  grid-area: logo;
 }
-header > div {
-  grid-area: div;
+header > .contact {
+  grid-area: contact;
+  font-size: 1.2rem;
 }
-header > button {
-  grid-area: button;
+header > .auth {
+  grid-area: auth;
 }
-header > h2 {
-  grid-area: h2;
+header > .title {
+  grid-area: title;
+  font-size: 2rem;
 }

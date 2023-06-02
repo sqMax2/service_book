@@ -32,7 +32,7 @@ class LoginView(APIView):
     authentication_classes = []
 
     def get(self, request):
-        return Response(get_user(request).username)
+        return Response(UserSerializer(get_user(request), context={'request': request}).data)
 
     @csrf_protect_method
     def post(self, request):
@@ -40,7 +40,7 @@ class LoginView(APIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
         login(request, user)
-        return Response("Logged in")
+        return Response(UserSerializer(get_user(request), context={'request': request}).data)
 
 
 class LogoutView(APIView):

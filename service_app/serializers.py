@@ -57,57 +57,7 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
 
 
 # App model serializers
-class CarSerializer(serializers.HyperlinkedModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name='car-detail', lookup_field='carNumber')
-    client = serializers.HyperlinkedRelatedField(view_name='user-detail', lookup_field='username', read_only=False,
-                                                 queryset=User.objects.all())
-    serviceCompany = serializers.HyperlinkedRelatedField(view_name='user-detail', lookup_field='username',
-                                                         read_only=False, queryset=User.objects.all())
-
-    class Meta:
-        model = Car
-        fields = ['carNumber', 'url', 'techniqueModel', 'engineModel', 'engineNumber', 'transmissionModel',
-                  'transmissionNumber', 'driveAxleModel', 'driveAxleNumber', 'steerableAxleModel',
-                  'steerableAxleNumber', 'supplyContract', 'shippingDate', 'consignee', 'deliveryAddress',
-                  'equipment', 'client', 'serviceCompany']
-
-
-class CarBasicSerializer(serializers.HyperlinkedModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name='car-detail', lookup_field='carNumber')
-
-    class Meta:
-        model = Car
-        fields = ['carNumber', 'url', 'techniqueModel', 'engineModel', 'engineNumber', 'transmissionModel',
-                  'transmissionNumber', 'driveAxleModel', 'driveAxleNumber', 'steerableAxleModel',
-                  'steerableAxleNumber']
-
-
-class MaintenanceSerializer(serializers.HyperlinkedModelSerializer):
-    id = serializers.PrimaryKeyRelatedField(read_only=True)
-    url = serializers.HyperlinkedIdentityField(view_name='maintenance-detail', lookup_field='id')
-    serviceCompany = serializers.HyperlinkedRelatedField(view_name='user-detail', lookup_field='username',
-                                                         read_only=False, queryset=User.objects.all())
-    car = serializers.HyperlinkedRelatedField(view_name='car-detail', lookup_field='carNumber',
-                                              read_only=False, queryset=Car.objects.all())
-
-    class Meta:
-        model = Maintenance
-        fields = '__all__'
-
-
-class ReclamationSerializer(serializers.HyperlinkedModelSerializer):
-    id = serializers.PrimaryKeyRelatedField(read_only=True)
-    url = serializers.HyperlinkedIdentityField(view_name='reclamation-detail', lookup_field='pk')
-    serviceCompany = serializers.HyperlinkedRelatedField(view_name='user-detail', lookup_field='username',
-                                                         read_only=False, queryset=User.objects.all())
-    car = serializers.HyperlinkedRelatedField(view_name='car-detail', lookup_field='carNumber',
-                                              read_only=False, queryset=Car.objects.all())
-
-    class Meta:
-        model = Reclamation
-        fields = '__all__'
-
-
+# Lib
 class TechniqueModelSerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='techniquemodel-detail', lookup_field='pk')
 
@@ -170,3 +120,74 @@ class RecoverySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Recovery
         fields = ['pk', 'name', 'description', 'url']
+
+
+# Main models
+class CarSerializer(serializers.HyperlinkedModelSerializer):
+    url = serializers.HyperlinkedIdentityField(view_name='car-detail', lookup_field='carNumber')
+    client = serializers.HyperlinkedRelatedField(view_name='user-detail', lookup_field='username', read_only=False,
+                                                 queryset=User.objects.all())
+    serviceCompany = serializers.HyperlinkedRelatedField(view_name='user-detail', lookup_field='username',
+                                                         read_only=False, queryset=User.objects.all())
+    techniqueModelName = serializers.SlugRelatedField(read_only=True, slug_field='name', source='techniqueModel')
+    engineModelName = serializers.SlugRelatedField(read_only=True, slug_field='name', source='engineModel')
+    transmissionModelName = serializers.SlugRelatedField(read_only=True, slug_field='name', source='transmissionModel')
+    driveAxleModelName = serializers.SlugRelatedField(read_only=True, slug_field='name', source='driveAxleModel')
+    steerableAxleModelName = serializers.SlugRelatedField(read_only=True, slug_field='name',
+                                                          source='steerableAxleModel')
+    clientName = serializers.SlugRelatedField(read_only=True, slug_field='first_name', source='client')
+    serviceCompanyName = serializers.SlugRelatedField(read_only=True, slug_field='first_name', source='serviceCompany')
+
+    class Meta:
+        model = Car
+        fields = ['carNumber', 'url', 'techniqueModel', 'techniqueModelName', 'engineModel', 'engineModelName',
+                  'engineNumber', 'transmissionModel', 'transmissionModelName', 'transmissionNumber', 'driveAxleModel',
+                  'driveAxleModelName', 'driveAxleNumber', 'steerableAxleModel', 'steerableAxleModelName',
+                  'steerableAxleNumber', 'supplyContract', 'shippingDate', 'consignee', 'deliveryAddress',
+                  'equipment', 'client', 'clientName', 'serviceCompany', 'serviceCompanyName']
+
+
+class CarBasicSerializer(serializers.HyperlinkedModelSerializer):
+    url = serializers.HyperlinkedIdentityField(view_name='car-detail', lookup_field='carNumber')
+    techniqueModelName = serializers.SlugRelatedField(read_only=True, slug_field='name', source='techniqueModel')
+    engineModelName = serializers.SlugRelatedField(read_only=True, slug_field='name', source='engineModel')
+    transmissionModelName = serializers.SlugRelatedField(read_only=True, slug_field='name', source='transmissionModel')
+    driveAxleModelName = serializers.SlugRelatedField(read_only=True, slug_field='name', source='driveAxleModel')
+    steerableAxleModelName = serializers.SlugRelatedField(read_only=True, slug_field='name',
+                                                          source='steerableAxleModel')
+
+    class Meta:
+        model = Car
+        fields = ['carNumber', 'url', 'techniqueModel', 'techniqueModelName', 'engineModel', 'engineModelName',
+                  'engineNumber', 'transmissionModel', 'transmissionModelName', 'transmissionNumber', 'driveAxleModel',
+                  'driveAxleModelName', 'driveAxleNumber', 'steerableAxleModel', 'steerableAxleModelName',
+                  'steerableAxleNumber']
+
+
+class MaintenanceSerializer(serializers.HyperlinkedModelSerializer):
+    id = serializers.PrimaryKeyRelatedField(read_only=True)
+    url = serializers.HyperlinkedIdentityField(view_name='maintenance-detail', lookup_field='id')
+    serviceCompany = serializers.HyperlinkedRelatedField(view_name='user-detail', lookup_field='username',
+                                                         read_only=False, queryset=User.objects.all())
+    car = serializers.HyperlinkedRelatedField(view_name='car-detail', lookup_field='carNumber',
+                                              read_only=False, queryset=Car.objects.all())
+
+    class Meta:
+        model = Maintenance
+        fields = '__all__'
+
+
+class ReclamationSerializer(serializers.HyperlinkedModelSerializer):
+    id = serializers.PrimaryKeyRelatedField(read_only=True)
+    url = serializers.HyperlinkedIdentityField(view_name='reclamation-detail', lookup_field='pk')
+    serviceCompany = serializers.HyperlinkedRelatedField(view_name='user-detail', lookup_field='username',
+                                                         read_only=False, queryset=User.objects.all())
+    car = serializers.HyperlinkedRelatedField(view_name='car-detail', lookup_field='carNumber',
+                                              read_only=False, queryset=Car.objects.all())
+
+    class Meta:
+        model = Reclamation
+        fields = '__all__'
+
+
+

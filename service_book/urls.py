@@ -32,10 +32,10 @@ router.register(r'recovery', RecoveryViewset)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include(router.urls)),
-    path('api/setcsrf/', SetCSRFCookie.as_view()),
-    path('api/login/', LoginView.as_view()),
-    path('api/logout/', LogoutView.as_view()),
+    path(r'api/setcsrf/', SetCSRFCookie.as_view(), name='csrf'),
+    path(r'api/login/', LoginView.as_view()),
+    path(r'api/logout/', LogoutView.as_view()),
+    path(r'api/', include(router.urls)),
     path('api-auth/', include('rest_framework.urls')),
     path('openapi', get_schema_view(title='Service App', description='API for Service app'), name='openapi-schema'),
     path('', include('service_app.urls', namespace='service_app')),
