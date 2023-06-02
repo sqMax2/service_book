@@ -64,7 +64,7 @@ class Auth extends React.Component {
                     <Button id={"logout"} onClick={this.logout}>Выйти</Button></>)
             :
                 (<><input id={"username"} placeholder={"Имя пользователя"} size={"20"} maxLength={"20"} />
-                <input id={"password"} placeholder={"Пароль"} size={"20"} maxLength={"20"} /> <br/>
+                <input id={"password"} type={"password"} placeholder={"Пароль"} size={"20"} maxLength={"20"} /> <br/>
                     <Button id={"auth-submit"} onClick={this.login}>Войти</Button></>)}
 
         </div>

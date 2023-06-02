@@ -169,8 +169,11 @@ class MaintenanceSerializer(serializers.HyperlinkedModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='maintenance-detail', lookup_field='id')
     serviceCompany = serializers.HyperlinkedRelatedField(view_name='user-detail', lookup_field='username',
                                                          read_only=False, queryset=User.objects.all())
+    serviceCompanyName = serializers.SlugRelatedField(read_only=True, slug_field='first_name', source='serviceCompany')
     car = serializers.HyperlinkedRelatedField(view_name='car-detail', lookup_field='carNumber',
                                               read_only=False, queryset=Car.objects.all())
+    carNumber = serializers.SlugRelatedField(read_only=True, slug_field='carNumber', source='car')
+    typeName = serializers.SlugRelatedField(read_only=True, slug_field='name', source='type')
 
     class Meta:
         model = Maintenance
@@ -182,12 +185,13 @@ class ReclamationSerializer(serializers.HyperlinkedModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='reclamation-detail', lookup_field='pk')
     serviceCompany = serializers.HyperlinkedRelatedField(view_name='user-detail', lookup_field='username',
                                                          read_only=False, queryset=User.objects.all())
+    serviceCompanyName = serializers.SlugRelatedField(read_only=True, slug_field='first_name', source='serviceCompany')
     car = serializers.HyperlinkedRelatedField(view_name='car-detail', lookup_field='carNumber',
                                               read_only=False, queryset=Car.objects.all())
+    carNumber = serializers.SlugRelatedField(read_only=True, slug_field='carNumber', source='car')
+    failureName = serializers.SlugRelatedField(read_only=True, slug_field='name', source='failure')
+    recoveryName = serializers.SlugRelatedField(read_only=True, slug_field='name', source='recovery')
 
     class Meta:
         model = Reclamation
         fields = '__all__'
-
-
-
