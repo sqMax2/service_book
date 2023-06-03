@@ -12,17 +12,27 @@ function AnonCarInfo () {
         axios.get('/api/car/' + searchNumber + "/")
         .then(res => {
             const car = res.data;
+            const field_list = car.field_list;
             searchResult.innerHTML = 'Информация о комплектации и технических характеристиках Вашей техники';
-            carDataRow.innerHTML = `<td>${car.carNumber}</td>
-                                <td>${car.techniqueModelName}</td>
-                                <td>${car.engineModelName}</td>
-                                <td>${car.engineNumber}</td>
-                                <td>${car.transmissionModelName}</td>
-                                <td>${car.transmissionNumber}</td>
-                                <td>${car.driveAxleModelName}</td>
-                                <td>${car.driveAxleNumber}</td>
-                                <td>${car.steerableAxleModelName}</td>
-                                <td>${car.steerableAxleNumber}</td>`
+            let table = '';
+            for (let field in field_list) {
+                let value = eval("car."+field);
+                if (value.slice(0,4) === "http") {
+                    value = eval("car."+field+"Name");
+                }
+                table += `<td data-cell="${field_list[field]}">${value}</td>`
+            }
+            carDataRow.innerHTML = table;
+            // carDataRow.innerHTML = `<td>${car.carNumber}</td>
+            //                     <td>${car.techniqueModelName}</td>
+            //                     <td>${car.engineModelName}</td>
+            //                     <td>${car.engineNumber}</td>
+            //                     <td>${car.transmissionModelName}</td>
+            //                     <td>${car.transmissionNumber}</td>
+            //                     <td>${car.driveAxleModelName}</td>
+            //                     <td>${car.driveAxleNumber}</td>
+            //                     <td>${car.steerableAxleModelName}</td>
+            //                     <td>${car.steerableAxleNumber}</td>`
             // console.log('user: ', user)
         })
         .catch((e) => {

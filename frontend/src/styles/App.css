@@ -38,7 +38,7 @@ body {
   place-items: center;
 }
 
-.wrapper {
+#root > .wrapper {
   min-height: 100vh;
   width: min(1200px, 100% - 3rem);
   display: grid;
@@ -96,7 +96,7 @@ header > div > a:hover {
 footer {
   display: grid;
   gap: 1rem;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 2fr 2fr auto;
   align-items: center;
   justify-items: center;
   padding-bottom: 1rem;
@@ -134,9 +134,46 @@ input {
 th {
   font-size: 0.9rem;
   font-weight: normal;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  max-height: 10rem;
+  vertical-align: middle;
+
 }
 
 .table-striped>tbody>tr:nth-child(odd)>td,
 .table-striped>tbody>tr:nth-child(odd)>th {
    background-color: var(--silant-color-biege);
  }
+
+@media  (max-width: 650px) {
+  td {
+    display: block;
+  }
+  td::before {
+    content: attr(data-cell) ": ";
+  }
+  th {
+    display: none;
+  }
+  header {
+  display: grid;
+  gap: .5rem;
+  grid-template-columns: 1fr 3fr;
+  grid-template-rows: 4rem 4rem auto;
+  align-items: center;
+  justify-items: center;
+  grid-template-areas:
+    "logo contact"
+    "logo title"
+    "auth auth";
+  padding-top: .5rem;
+  margin-bottom: .5rem;
+  }
+  header input {
+    max-width: 10rem;
+  }
+  header > .logo {
+    min-width: 120px;
+  }
+}

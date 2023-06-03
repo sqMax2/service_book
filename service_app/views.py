@@ -3,6 +3,7 @@ from pprint import pprint
 from django.contrib.auth import login, logout, get_user
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_protect
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, permissions, filters, status
 from django.views.generic import TemplateView
 # from .models import Car, Account
@@ -57,6 +58,8 @@ class UserViewset(viewsets.ReadOnlyModelViewSet):
     lookup_field = 'username'
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['groups']
 
 
 class GroupViewset(viewsets.ReadOnlyModelViewSet):
@@ -96,7 +99,17 @@ class ClientPermission(permissions.BasePermission):
 
 class ServicePermission(permissions.BasePermission):
     def has_permission(self, request, view):
-        return request.user.groups.filter(name='Service').exists()
+        if view.basename == 'maintenance':
+            model = Maintenance
+        elif view.basename == 'reclamation':
+            model = Reclamation
+        else:
+            return request.user.groups.filter(name='Service').exists()
+        obj = model.objects.filter(**view.kwargs)
+        is_contractor = obj[0].serviceCompany == request.user
+        pprint(is_contractor)
+        return is_contractor or request.user.groups.filter(name='Service').exists() and \
+               request.method not in ['PATCH', 'PUT', 'DELETE']
 
 
 class ReadonlyPermission(permissions.BasePermission):
@@ -116,20 +129,30 @@ class CarViewset(viewsets.ModelViewSet):
     permission_classes = [AdminPermission | ManagerPermission | ReadonlyPermission]
     lookup_field = 'carNumber'
     queryset = Car.objects.all()
-    filter_backends = [filters.OrderingFilter]
+    filter_backends = [filters.OrderingFilter, filters.SearchFilter, DjangoFilterBackend]
     ordering_fields = ['shippingDate']
     ordering = ['shippingDate']
+    filterset_fields = ['carNumber', 'client', 'serviceCompany']
+    search_fields = ['carNumber', 'client__username', 'serviceCompany__username']
 
+    # Client filtering
     def get_queryset(self):
         queryset = self.queryset
-        params = self.request.query_params
-        field_names = [field.name for field in queryset.model._meta.fields]
-        for param in params:
-            if param in field_names:
-                queryset = queryset.filter(**{param: params[param]})
-                # pprint(f'{param}: {params[param]} is a field')
-            # pprint(queryset)
+        user = self.request.user
+        if user.groups.filter(name='Client').exists():
+            queryset = queryset.filter(client=user)
         return queryset
+
+    # def get_queryset(self):
+    #     queryset = self.queryset
+    #     params = self.request.query_params
+    #     field_names = [field.name for field in queryset.model._meta.fields]
+    #     for param in params:
+    #         if param in field_names:
+    #             queryset = queryset.filter(**{param: params[param]})
+    #             # pprint(f'{param}: {params[param]} is a field')
+    #         # pprint(queryset)
+    #     return queryset
 
     def get_serializer_class(self):
         if self.request.user.is_authenticated:
@@ -144,20 +167,30 @@ class MaintenanceViewset(viewsets.ModelViewSet):
     lookup_field = 'id'
     queryset = Maintenance.objects.all()
     serializer_class = MaintenanceSerializer
-    filter_backends = [filters.OrderingFilter]
+    filter_backends = [filters.OrderingFilter, filters.SearchFilter, DjangoFilterBackend]
     ordering_fields = ['date']
     ordering = ['date']
+    filterset_fields = ['type', 'car', 'serviceCompany']
+    search_fields = ['type__name', 'car__carNumber', 'serviceCompany__username']
 
+    # Client filtering
     def get_queryset(self):
         queryset = self.queryset
-        params = self.request.query_params
-        field_names = [field.name for field in queryset.model._meta.fields]
-        for param in params:
-            if param in field_names:
-                queryset = queryset.filter(**{param: params[param]})
-                # pprint(f'{param}: {params[param]} is a field')
-            # pprint(queryset)
+        user = self.request.user
+        if user.groups.filter(name='Client').exists():
+            queryset = queryset.filter(car__client=user)
         return queryset
+
+    # def get_queryset(self):
+    #     queryset = self.queryset
+    #     params = self.request.query_params
+    #     field_names = [field.name for field in queryset.model._meta.fields]
+    #     for param in params:
+    #         if param in field_names:
+    #             queryset = queryset.filter(**{param: params[param]})
+    #             # pprint(f'{param}: {params[param]} is a field')
+    #         # pprint(queryset)
+    #     return queryset
 
 
 class ReclamationViewset(viewsets.ModelViewSet):
@@ -165,20 +198,29 @@ class ReclamationViewset(viewsets.ModelViewSet):
     lookup_field = 'pk'
     queryset = Reclamation.objects.all()
     serializer_class = ReclamationSerializer
-    filter_backends = [filters.OrderingFilter]
+    filter_backends = [filters.OrderingFilter, filters.SearchFilter, DjangoFilterBackend]
     ordering_fields = ['failureDate']
     ordering = ['failureDate']
+    filterset_fields = ['failure', 'recovery', 'car', 'serviceCompany']
+    search_fields = ['failure__name', 'recovery__name', 'car__carNumber', 'serviceCompany__username']
 
+    # Client filtering
     def get_queryset(self):
         queryset = self.queryset
-        params = self.request.query_params
-        field_names = [field.name for field in queryset.model._meta.fields]
-        for param in params:
-            if param in field_names:
-                queryset = queryset.filter(**{param: params[param]})
-                # pprint(f'{param}: {params[param]} is a field')
-            # pprint(queryset)
+        user = self.request.user
+        if user.groups.filter(name='Client').exists():
+            queryset = queryset.filter(car__client=user)
         return queryset
+    # def get_queryset(self):
+    #     queryset = self.queryset
+    #     params = self.request.query_params
+    #     field_names = [field.name for field in queryset.model._meta.fields]
+    #     for param in params:
+    #         if param in field_names:
+    #             queryset = queryset.filter(**{param: params[param]})
+    #             # pprint(f'{param}: {params[param]} is a field')
+    #         # pprint(queryset)
+    #     return queryset
 
 
 class TechniqueModelViewset(viewsets.ModelViewSet):

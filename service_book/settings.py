@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_filters',
     'webpack_loader',
     'rest_framework',
     'frontend',
@@ -144,7 +145,7 @@ CORS_ORIGIN_WHITELIST = [
     'http://127.0.0.1:8000',
     'http://localhost:8000',
     'http://127.0.0.1:3000',
-    'http://localhost:3000'
+    'http://localhost:3000',
 ]
 
 WEBPACK_LOADER = {
@@ -200,6 +201,7 @@ REST_FRAMEWORK = {
         # 'rest_framework.authentication.BasicAuthentication'
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+        'rest_framework.permissions.AllowAny',
+        # 'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ]
 }

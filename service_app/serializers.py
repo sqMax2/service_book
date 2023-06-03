@@ -42,10 +42,22 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 class GroupSerializer(serializers.HyperlinkedModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='group-detail', lookup_field='name')
     id = serializers.PrimaryKeyRelatedField(read_only=True)
+    user_list = serializers.SerializerMethodField()
+    user_set = serializers.HyperlinkedRelatedField(view_name='user-detail', lookup_field='username', many=True,
+                                                   read_only=True)
+    user_fn = serializers.SerializerMethodField()
 
     class Meta:
         model = Group
-        fields = ['id', 'name', 'url']
+        fields = ['id', 'name', 'url', 'user_list', 'user_fn', 'user_set']
+
+    def get_user_list(self, obj):
+        result = [val for sublist in obj.user_set.values_list('username') for val in sublist]
+        return result
+
+    def get_user_fn(self, obj):
+        result = [val for sublist in obj.user_set.values_list('first_name') for val in sublist]
+        return result
 
 
 # class AccountSerializer(serializers.HyperlinkedModelSerializer):
@@ -137,6 +149,7 @@ class CarSerializer(serializers.HyperlinkedModelSerializer):
                                                           source='steerableAxleModel')
     clientName = serializers.SlugRelatedField(read_only=True, slug_field='first_name', source='client')
     serviceCompanyName = serializers.SlugRelatedField(read_only=True, slug_field='first_name', source='serviceCompany')
+    field_list = serializers.SerializerMethodField()
 
     class Meta:
         model = Car
@@ -144,7 +157,12 @@ class CarSerializer(serializers.HyperlinkedModelSerializer):
                   'engineNumber', 'transmissionModel', 'transmissionModelName', 'transmissionNumber', 'driveAxleModel',
                   'driveAxleModelName', 'driveAxleNumber', 'steerableAxleModel', 'steerableAxleModelName',
                   'steerableAxleNumber', 'supplyContract', 'shippingDate', 'consignee', 'deliveryAddress',
-                  'equipment', 'client', 'clientName', 'serviceCompany', 'serviceCompanyName']
+                  'equipment', 'client', 'clientName', 'serviceCompany', 'serviceCompanyName', 'field_list']
+
+    def get_field_list(self, obj):
+        result = dict([(field.name, field.verbose_name) for field in obj._meta.fields])
+        return result
+
 
 
 class CarBasicSerializer(serializers.HyperlinkedModelSerializer):
@@ -155,13 +173,18 @@ class CarBasicSerializer(serializers.HyperlinkedModelSerializer):
     driveAxleModelName = serializers.SlugRelatedField(read_only=True, slug_field='name', source='driveAxleModel')
     steerableAxleModelName = serializers.SlugRelatedField(read_only=True, slug_field='name',
                                                           source='steerableAxleModel')
+    field_list = serializers.SerializerMethodField()
 
     class Meta:
         model = Car
         fields = ['carNumber', 'url', 'techniqueModel', 'techniqueModelName', 'engineModel', 'engineModelName',
                   'engineNumber', 'transmissionModel', 'transmissionModelName', 'transmissionNumber', 'driveAxleModel',
                   'driveAxleModelName', 'driveAxleNumber', 'steerableAxleModel', 'steerableAxleModelName',
-                  'steerableAxleNumber']
+                  'steerableAxleNumber', 'field_list']
+
+    def get_field_list(self, obj):
+        result = dict([(field.name, field.verbose_name) for field in obj._meta.fields][0:10])
+        return result
 
 
 class MaintenanceSerializer(serializers.HyperlinkedModelSerializer):
