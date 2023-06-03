@@ -11,6 +11,7 @@ class Auth extends React.Component {
 
         this.logout = this.logout.bind(this);
         this.login = this.login.bind(this);
+        this.keypress = this.keypress.bind(this);
     }
 
     state ={
@@ -29,6 +30,7 @@ class Auth extends React.Component {
             })
     }
     componentDidUpdate(prevProps, prevState, snapshot) {
+        console.log("-user is going to update-")
         this.props.updateUser(this.state.user);
     }
 
@@ -56,6 +58,12 @@ class Auth extends React.Component {
             })
     }
 
+    keypress(evt) {
+        if (evt.keyCode === 13) {
+            this.login();
+        }
+    }
+
     render () {
         return (
         <div className={this.props.className}>
@@ -63,8 +71,10 @@ class Auth extends React.Component {
                 (<><div>{this.state.user.first_name ? this.state.user.first_name : this.state.user.username}</div>
                     <Button id={"logout"} onClick={this.logout}>Выйти</Button></>)
             :
-                (<><input id={"username"} placeholder={"Имя пользователя"} size={"20"} maxLength={"20"} />
-                <input id={"password"} type={"password"} placeholder={"Пароль"} size={"20"} maxLength={"20"} /> <br/>
+                (<><input id={"username"} placeholder={"Имя пользователя"} onKeyDown={this.keypress}
+                          size={"20"} maxLength={"20"} />
+                <input id={"password"} type={"password"} placeholder={"Пароль"} onKeyDown={this.keypress}
+                       size={"20"} maxLength={"20"} /> <br/>
                     <Button id={"auth-submit"} onClick={this.login}>Войти</Button></>)}
 
         </div>

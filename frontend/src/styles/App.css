@@ -22,18 +22,25 @@
   font-weight: bold;
   font-style: italic;
 }
-
+:root {
+  --silant-color-blue: #163E6C;
+  --silant-color-red: #D20A11;
+  --silant-color-biege: #EBE6D6;
+}
 body {
   font-family: "PT-Astra-Sans";
   font-size: 1rem;
-  min-width: 600px;
+  /*min-width: 600px;*/
+}
+
+#root {
   display: grid;
   place-items: center;
 }
 
 .wrapper {
   min-height: 100vh;
-  width: 80vw;
+  width: min(1200px, 100% - 3rem);
   display: grid;
   gap: 0px;
   grid-template-rows: auto 1fr auto;
@@ -46,16 +53,19 @@ body {
 header {
   display: grid;
   gap: 1rem;
-  grid-template-columns: 2fr 5fr 2fr;
+  grid-template-columns: 1fr 2fr 1fr;
   grid-template-rows: 4rem 4rem;
   align-items: center;
   justify-items: center;
   grid-template-areas:
     "logo contact auth"
     "logo title auth";
+  padding-top: 1rem;
+  margin-bottom: 1rem;
 }
 header > .logo {
   grid-area: logo;
+  min-width: 75px;
 }
 header > .contact {
   grid-area: contact;
@@ -66,5 +76,67 @@ header > .auth {
 }
 header > .title {
   grid-area: title;
-  font-size: 2rem;
+  font-size: min(1.5rem, max(1rem, 3vw));
+  text-align: center;
+  color: var(--silant-color-blue);
 }
+header > div > a:link {
+  color: var(--silant-color-blue);
+  text-decoration: none;
+}
+header > div > a:visited {
+  color: #3d6696;
+  text-decoration: none;
+}
+header > div > a:hover {
+  color: #0e2c4d;
+  text-decoration: none;
+}
+
+footer {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  justify-items: center;
+  padding-bottom: 1rem;
+}
+footer > div > a:link {
+  color: var(--silant-color-blue);
+  text-decoration: none;
+}
+footer > div > a:visited {
+  color: #3d6696;
+  text-decoration: none;
+}
+footer > div > a:hover {
+  color: #0e2c4d;
+  text-decoration: none;
+}
+
+.btn {
+  background-color: var(--silant-color-blue);
+  border-color: var(--silant-color-blue);
+  margin: 0 0.5rem 0 0.5rem;
+}
+header .btn {
+  margin-top: 0.5rem;
+}
+header input {
+  margin-top: 0.5rem;
+}
+
+input {
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+th {
+  font-size: 0.9rem;
+  font-weight: normal;
+}
+
+.table-striped>tbody>tr:nth-child(odd)>td,
+.table-striped>tbody>tr:nth-child(odd)>th {
+   background-color: var(--silant-color-biege);
+ }
