@@ -1,6 +1,8 @@
 """
 service_app REST serializers
 """
+from abc import ABC
+
 import django.contrib.auth.models
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User, Group
@@ -197,10 +199,15 @@ class MaintenanceSerializer(serializers.HyperlinkedModelSerializer):
                                               read_only=False, queryset=Car.objects.all())
     carNumber = serializers.SlugRelatedField(read_only=True, slug_field='carNumber', source='car')
     typeName = serializers.SlugRelatedField(read_only=True, slug_field='name', source='type')
+    field_list = serializers.SerializerMethodField()
 
     class Meta:
         model = Maintenance
         fields = '__all__'
+
+    def get_field_list(self, obj):
+        result = dict([(field.name, field.verbose_name) for field in obj._meta.fields])
+        return result
 
 
 class ReclamationSerializer(serializers.HyperlinkedModelSerializer):
@@ -214,7 +221,12 @@ class ReclamationSerializer(serializers.HyperlinkedModelSerializer):
     carNumber = serializers.SlugRelatedField(read_only=True, slug_field='carNumber', source='car')
     failureName = serializers.SlugRelatedField(read_only=True, slug_field='name', source='failure')
     recoveryName = serializers.SlugRelatedField(read_only=True, slug_field='name', source='recovery')
+    field_list = serializers.SerializerMethodField()
 
     class Meta:
         model = Reclamation
         fields = '__all__'
+
+    def get_field_list(self, obj):
+        result = dict([(field.name, field.verbose_name) for field in obj._meta.fields])
+        return result

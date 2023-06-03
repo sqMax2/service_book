@@ -51,6 +51,23 @@ class LogoutView(APIView):
         return Response(status=status.HTTP_200_OK)
 
 
+# Libraries
+class LibraryView(APIView):
+    permission_classes = [IsAuthenticated]
+    # authentication_classes = []
+
+    def get(self, request):
+        result = {'techniqueModel': dict([(elem.id, elem.name) for elem in TechniqueModel.objects.all()])}
+        result.update({'engineModel': dict([(elem.id, elem.name) for elem in EngineModel.objects.all()])})
+        result.update({'transmissionModel': dict([(elem.id, elem.name) for elem in TransmissionModel.objects.all()])})
+        result.update({'driveAxleModel': dict([(elem.id, elem.name) for elem in DriveAxleModel.objects.all()])})
+        result.update({'steerableAxleModel': dict([(elem.id, elem.name) for elem in SteerableAxleModel.objects.all()])})
+        result.update({'maintenanceType': dict([(elem.id, elem.name) for elem in MaintenanceType.objects.all()])})
+        result.update({'failure': dict([(elem.id, elem.name) for elem in Failure.objects.all()])})
+        result.update({'recovery': dict([(elem.id, elem.name) for elem in Recovery.objects.all()])})
+        return Response(result)
+
+
 # Auth model views
 class UserViewset(viewsets.ReadOnlyModelViewSet):
     # authentication_classes = [BasicAuthentication]

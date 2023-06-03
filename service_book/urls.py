@@ -10,7 +10,7 @@ from rest_framework.schemas import get_schema_view
 from service_app.views import CarViewset, MaintenanceViewset, ReclamationViewset, TechniqueModelViewset, \
     EngineModelViewset, TransmissionModelViewset, DriveAxleModelViewset, SteerableAxleModelViewset, \
     MaintenanceTypeViewset, FailureViewset, RecoveryViewset, UserViewset, GroupViewset, SetCSRFCookie, LoginView, \
-    LogoutView
+    LogoutView, LibraryView
 
 # REST
 router = routers.DefaultRouter()
@@ -30,11 +30,13 @@ router.register(r'failure', FailureViewset)
 router.register(r'recovery', RecoveryViewset)
 
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path(r'api/setcsrf/', SetCSRFCookie.as_view(), name='csrf'),
     path(r'api/login/', LoginView.as_view()),
     path(r'api/logout/', LogoutView.as_view()),
+    path(r'api/library/', LibraryView.as_view()),
     path(r'api/', include(router.urls)),
     path('api-auth/', include('rest_framework.urls')),
     path('openapi', get_schema_view(title='Service App', description='API for Service app'), name='openapi-schema'),
