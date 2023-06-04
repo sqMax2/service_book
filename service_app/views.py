@@ -65,6 +65,11 @@ class LibraryView(APIView):
         result.update({'maintenanceType': dict([(elem.id, elem.name) for elem in MaintenanceType.objects.all()])})
         result.update({'failure': dict([(elem.id, elem.name) for elem in Failure.objects.all()])})
         result.update({'recovery': dict([(elem.id, elem.name) for elem in Recovery.objects.all()])})
+        result.update({'car': dict([(field.name, field.verbose_name) for field in Car._meta.fields])})
+        result.update({'maintenance': dict([(field.name, field.verbose_name) for field in Maintenance._meta.fields
+                                            if field.name != 'id'])})
+        result.update({'reclamation': dict([(field.name, field.verbose_name) for field in Reclamation._meta.fields
+                                            if field.name != 'id'])})
         return Response(result)
 
 

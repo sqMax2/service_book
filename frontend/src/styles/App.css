@@ -144,7 +144,14 @@ th {
 .table-striped>tbody>tr:nth-child(odd)>td,
 .table-striped>tbody>tr:nth-child(odd)>th {
    background-color: var(--silant-color-biege);
- }
+}
+.table-striped td {
+  font-size: 0.8rem;
+}
+td, tr {
+    border-top: none;
+    border-bottom: none;
+}
 
 @media  (max-width: 650px) {
   td {

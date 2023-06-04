@@ -23,17 +23,6 @@ function AnonCarInfo () {
                 table += `<td data-cell="${field_list[field]}">${value}</td>`
             }
             carDataRow.innerHTML = table;
-            // carDataRow.innerHTML = `<td>${car.carNumber}</td>
-            //                     <td>${car.techniqueModelName}</td>
-            //                     <td>${car.engineModelName}</td>
-            //                     <td>${car.engineNumber}</td>
-            //                     <td>${car.transmissionModelName}</td>
-            //                     <td>${car.transmissionNumber}</td>
-            //                     <td>${car.driveAxleModelName}</td>
-            //                     <td>${car.driveAxleNumber}</td>
-            //                     <td>${car.steerableAxleModelName}</td>
-            //                     <td>${car.steerableAxleNumber}</td>`
-            // console.log('user: ', user)
         })
         .catch((e) => {
             searchResult.innerHTML = 'Машина не найдена';
