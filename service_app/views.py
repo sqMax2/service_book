@@ -53,7 +53,7 @@ class LogoutView(APIView):
 
 # Libraries
 class LibraryView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     # authentication_classes = []
 
     def get(self, request):

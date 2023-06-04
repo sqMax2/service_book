@@ -58,16 +58,19 @@ function Main(props) {
             const cars = res.data.results;
             setCarData(cars);
         });
-        axios.get('/api/maintenance/')
-        .then(res => {
-            const maintenances = res.data.results;
-            setMaintenanceData(maintenances);
-        });
-        axios.get('/api/reclamation/')
-        .then(res => {
-            const reclamations = res.data.results;
-            setReclamationData(reclamations);
-        });
+        if (props.user.username) {
+            axios.get('/api/maintenance/')
+            .then(res => {
+                const maintenances = res.data.results;
+                setMaintenanceData(maintenances);
+            });
+            axios.get('/api/reclamation/')
+            .then(res => {
+                const reclamations = res.data.results;
+                setReclamationData(reclamations);
+            });
+        }
+
     }
 
     const expandElement = (e) => {
@@ -76,7 +79,7 @@ function Main(props) {
     }
 
     React.useEffect(() => {get_library();}, []);
-    React.useEffect(() => get_data(), [])
+    React.useEffect(() => get_data(), [props.user])
 
     return (
         <>
@@ -88,8 +91,8 @@ function Main(props) {
                           <Tab>Общая информация</Tab>
                           <Tab>Техническое обслуживание</Tab>
                           <Tab>Рекламации</Tab>
-                          <Tab>Yoshi</Tab>
-                          <Tab>Toad</Tab>
+                          <Tab disabled>Подробности</Tab>
+                          <Tab disabled>Каталоги</Tab>
                         </TabList>
 
                         <TabPanel>
