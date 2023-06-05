@@ -26,6 +26,7 @@
   --silant-color-blue: #163E6C;
   --silant-color-red: #D20A11;
   --silant-color-biege: #EBE6D6;
+  --silant-color-biege-a: #EBE6D688;
 }
 body {
   font-family: "PT-Astra-Sans";
@@ -138,12 +139,11 @@ th {
   text-orientation: mixed;
   max-height: 10rem;
   vertical-align: middle;
-
 }
-
 .table-striped>tbody>tr:nth-child(odd)>td,
 .table-striped>tbody>tr:nth-child(odd)>th {
-   background-color: var(--silant-color-biege);
+  background-color: var(--silant-color-biege-a);
+
 }
 .table-striped td {
   font-size: 0.8rem;
@@ -152,6 +152,20 @@ td, tr {
     border-top: none;
     border-bottom: none;
 }
+.table-striped>tbody tr:hover>td {
+
+  color: var(--silant-color-blue);
+  /*transition: ease-out 1s;*/
+  cursor: pointer;
+
+
+}
+.table-striped>tbody tr:hover {
+  /*transform: scale(1.01);*/
+  background-color: #cec6ae;
+  transition: ease-out .3s;
+}
+
 
 @media  (max-width: 650px) {
   td {

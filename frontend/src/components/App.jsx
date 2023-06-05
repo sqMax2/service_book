@@ -13,7 +13,6 @@ function App() {
     const [user, setUser] = React.useState({});
 
     const updateUser = (user_data) => {
-        console.log('--user updated--');
         setUser(user_data);
     }
     return (

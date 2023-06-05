@@ -30,7 +30,6 @@ class Auth extends React.Component {
             })
     }
     componentDidUpdate(prevProps, prevState, snapshot) {
-        console.log("-user is going to update-")
         this.props.updateUser(this.state.user);
     }
 

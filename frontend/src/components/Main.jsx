@@ -12,6 +12,7 @@ function Main(props) {
     const [carData, setCarData] = React.useState([]);
     const [maintenanceData, setMaintenanceData] = React.useState([]);
     const [reclamationData, setReclamationData] = React.useState([]);
+    const [detailObject, setDetailObject] = React.useState([]);
     const user = props.user
 
     const objectMap = (obj, fn) => Object.entries(obj).map(([k, v], i) => fn(v, k, i)
@@ -70,13 +71,50 @@ function Main(props) {
                 setReclamationData(reclamations);
             });
         }
-
     }
 
     const expandElement = (e) => {
         console.log(e.target.closest('tr').dataset.id)
         console.log(e.target.closest('tbody').className)
-    }
+        let tab_detail = document.getElementById("tab:r0:3");
+        let tab_panel_detail = document.getElementById("panel:r0:3");
+
+        tab_detail.click();
+
+        let detail_info = [];
+        let object = {};
+        let lib = {};
+
+        switch (e.target.closest('tbody').className) {
+            case 'car-data':
+                object = carData.find(element => element.carNumber === e.target.closest('tr').dataset.id);
+                lib = library.car;
+                break;
+            case 'maintenance-data':
+                object = maintenanceData.find(element => Number(element.id) === Number(e.target.closest('tr').dataset.id));
+                lib = library.maintenance;
+                break;
+            case 'reclamation-data':
+                object = reclamationData.find(element => Number(element.id) === Number(e.target.closest('tr').dataset.id));
+                lib = library.reclamation;
+        }
+        for (let field in lib) {
+            let value = object[field];
+            if (field === 'id') {
+                continue;
+            }
+            if (value && (value.length > 4)) {
+                if (value.slice(0,4) === "http") {
+                    value = object[field+"Name"];
+                }
+            }
+            if (field === "car") {
+                value = object[field+"Number"];
+            }
+            detail_info.push(<div>{lib[field]}: {value}</div>);
+        }
+        setDetailObject(detail_info);
+    };
 
     React.useEffect(() => {get_library();}, []);
     React.useEffect(() => get_data(), [props.user])
@@ -91,11 +129,11 @@ function Main(props) {
                           <Tab>Общая информация</Tab>
                           <Tab>Техническое обслуживание</Tab>
                           <Tab>Рекламации</Tab>
-                          <Tab disabled>Подробности</Tab>
+                          <Tab>Подробности</Tab>
                           <Tab disabled>Каталоги</Tab>
                         </TabList>
 
-                        <TabPanel>
+                        <TabPanel className={"tab-panel-car"}>
                             <div className={'table-sorting'}></div>
                             <div className={'table'}>
                                 <table className={"table-striped"}>
@@ -113,7 +151,7 @@ function Main(props) {
                                 </table>
                             </div>
                         </TabPanel>
-                        <TabPanel>
+                        <TabPanel className={"tab-panel-maintenance"}>
                             <div className={'table-sorting'}></div>
                             <div className={'table'}>
                                 <table className={"table-striped"}>
@@ -129,7 +167,7 @@ function Main(props) {
                                 </table>
                             </div>
                         </TabPanel>
-                        <TabPanel>
+                        <TabPanel className={"tab-panel-reclamation"}>
                             <div className={'table-sorting'}></div>
                             <div className={'table'}>
                                 <table className={"table-striped"}>
@@ -147,9 +185,12 @@ function Main(props) {
                                 </table>
                             </div>
                         </TabPanel>
-                        <TabPanel>
+                        <TabPanel className={"tab-panel-detail"}>
+                            <div className={'detail'}>
+                                {detailObject ? detailObject : ''}
+                            </div>
                         </TabPanel>
-                        <TabPanel>
+                        <TabPanel className={"tab-panel-catalogue"}>
                         </TabPanel>
                     </Tabs>
 
