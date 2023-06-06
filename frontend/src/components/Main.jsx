@@ -6,6 +6,7 @@ import 'react-tabs/style/react-tabs.css';
 import withRouter from "./withRouter";
 import axios from "axios";
 import {Table} from "react-bootstrap";
+import {forEach} from "react-bootstrap/ElementChildren";
 
 function Main(props) {
     const [library, setLibrary] = React.useState({});
@@ -17,6 +18,12 @@ function Main(props) {
 
     const objectMap = (obj, fn) => Object.entries(obj).map(([k, v], i) => fn(v, k, i)
     )
+    const tableSort = (table, column, ascend) => {
+        let sortedRows = Array.from(table.rows)
+        .slice(1)
+        .sort((rowA, rowB) => rowA.cells[column].innerHTML > rowB.cells[column].innerHTML ? -1 + 2 * ascend : 1 - 2 * ascend);
+        table.tBodies[0].append(...sortedRows);
+    }
 
     const get_library = () => {
         axios.get('/api/library/')
@@ -71,6 +78,30 @@ function Main(props) {
                 setReclamationData(reclamations);
             });
         }
+    }
+
+    const sortHandler = (e) => {
+        let header = e.target;
+        let index = header.cellIndex;
+        let table = header.closest('table');
+        let sign = document.createElement('div');
+        let prev_sorted = table.querySelectorAll('.asc,.desc');
+        prev_sorted.forEach((elem) => {
+            if (elem !== header) {
+                elem.classList.remove('asc', 'desc');
+            }
+        })
+        if (header.classList.contains('asc')) {
+            header.classList.add('desc');
+            header.classList.remove('asc');
+            tableSort(table, index, false);
+        }
+        else {
+            header.classList.add('asc');
+            header.classList.remove('desc');
+            tableSort(table, index, true);
+        }
+
     }
 
     const expandElement = (e) => {
@@ -141,7 +172,7 @@ function Main(props) {
                                         <tr>
                                             {library.car ? objectMap(library.car, val => {
                                                 return (
-                                                    <th>{val}</th>
+                                                    <th onClick={sortHandler}>{val}</th>
                                                 )}):''}
                                         </tr>
                                     </thead>
@@ -158,7 +189,7 @@ function Main(props) {
                                     <thead>
                                         <tr>
                                             {library.maintenance ? objectMap(library.maintenance, val => {
-                                                return (<th>{val}</th>) }):''}
+                                                return (<th onClick={sortHandler}>{val}</th>) }):''}
                                         </tr>
                                     </thead>
                                     <tbody className={"maintenance-data"}>
@@ -175,7 +206,7 @@ function Main(props) {
                                         <tr>
                                             {library.reclamation ? objectMap(library.reclamation, val => {
                                                 return (
-                                                    <th>{val}</th>
+                                                    <th onClick={sortHandler}>{val}</th>
                                                 )}):''}
                                         </tr>
                                     </thead>
